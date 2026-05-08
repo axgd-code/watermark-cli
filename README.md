@@ -1,23 +1,32 @@
 # watermark-cli
 
-CLI Java pour appliquer un watermark texte sur des PDF.
+Language: Francais | [English](README.en.md)
+
+CLI Java pour appliquer un filigrane texte sur des PDF, en fichier unique ou en traitement massif de dossiers imbriqués.
+
+## Pourquoi ce projet ?
+
+- Traitement d'un PDF ou d'un répertoire complet (récursif)
+- Conservation de l'arborescence en sortie
+- Protection des zones QR code
+- Progression affichée en CLI sur les tâches longues (fichiers/pages)
+- Algorithme éprouvé, issu d'un projet open source de référence
 
 ## Inspiration
 
-Le projet est inspire de ce repository open-source:
+Ce projet s'inspire du dépôt DossierFacile :
+https://github.com/MTES-MCT/dossierfacile-backend
 
-- https://github.com/MTES-MCT/dossierfacile-backend
+Plus précisément, l'implémentation reprend la logique du module `dossierfacile-pdf-generator`, notamment la classe `BOPdfDocumentTemplate` (ainsi que son filtre de distorsion), afin de réutiliser un algorithme existant et robuste plutôt que d'en créer un nouveau.
 
-Plus precisement, l'implementation reprend la logique du module `dossierfacile-pdf-generator`, notamment la classe `BOPdfDocumentTemplate` (et son filtre de distorsion associe), afin de reutiliser un algorithme deja eprouve au lieu d'en reinventer un.
-
-Ce qui est repris dans ce CLI:
+Éléments repris dans ce CLI :
 
 - rendu des pages PDF en images
-- application d'un watermark diagonal repete avec blur gaussien
-- protection des zones QR code (suppression locale du watermark)
+- application d'un filigrane diagonal répété avec un flou gaussien
+- protection des zones QR code (suppression locale du filigrane)
 - reconstruction d'un PDF final page par page
 
-## Prerequis
+## Prérequis
 
 - Java 21+
 - Maven 3.9+
@@ -28,15 +37,13 @@ Ce qui est repris dans ce CLI:
 mvn clean package
 ```
 
-Le binaire genere est:
+Le binaire généré est :
 
 ```bash
 target/watermark-cli.jar
 ```
 
-## Utilisation
-
-### 1) Un seul PDF en entree
+## Démarrage rapide
 
 ```bash
 java -jar target/watermark-cli.jar \
@@ -45,7 +52,18 @@ java -jar target/watermark-cli.jar \
   --watermark "DOSSIER DE LOCATION - NOM PRENOM"
 ```
 
-Tu peux aussi donner un dossier de sortie existant avec un input fichier:
+## Utilisation détaillée
+
+### 1. Traiter un seul PDF
+
+```bash
+java -jar target/watermark-cli.jar \
+  --input /chemin/source/document.pdf \
+  --output /chemin/sortie/document-watermarked.pdf \
+  --watermark "DOSSIER DE LOCATION - NOM PRENOM"
+```
+
+Vous pouvez aussi fournir un dossier de sortie existant avec une entrée fichier :
 
 ```bash
 java -jar target/watermark-cli.jar \
@@ -54,7 +72,7 @@ java -jar target/watermark-cli.jar \
   -w "DOSSIER DE LOCATION - NOM PRENOM"
 ```
 
-### 2) Dossier en entree (recursif)
+### 2. Traiter un dossier (récursif)
 
 ```bash
 java -jar target/watermark-cli.jar \
@@ -63,18 +81,18 @@ java -jar target/watermark-cli.jar \
   --watermark "DOSSIER DE LOCATION - NOM PRENOM"
 ```
 
-Comportement:
+Comportement :
 
-- parcours recursif de tous les sous-dossiers
+- parcours récursif de tous les sous-dossiers
 - traitement de tous les fichiers `*.pdf`
-- recreation de la meme structure de dossiers en sortie
-- les fichiers non-PDF sont ignores
+- recréation de la même structure de dossiers en sortie
+- fichiers non PDF ignorés
 
-### 3) Écraser les fichiers de sortie
+### 3. Écraser les fichiers existants
 
-Par defaut, la commande échoue si le PDF de sortie existe deja.
+Par défaut, la commande échoue si le PDF de sortie existe déjà.
 
-Pour autoriser l'ecrasement:
+Pour autoriser l'écrasement :
 
 ```bash
 java -jar target/watermark-cli.jar \
@@ -86,33 +104,33 @@ java -jar target/watermark-cli.jar \
 
 ## Options
 
-- `-i, --input` (obligatoire): chemin vers un PDF ou un dossier
-- `-o, --output` (obligatoire): chemin du PDF de sortie ou dossier de sortie
-- `-w, --watermark` (obligatoire): texte du watermark
-- `--overwrite` (optionnel): écrase les fichiers existants
-- `--use-colors` (optionnel): active la variante couleur du watermark
-- `--use-distortion` (optionnel): active la distorsion du watermark
+- `-i, --input` (obligatoire) : chemin vers un PDF ou un dossier
+- `-o, --output` (obligatoire) : chemin du PDF de sortie ou dossier de sortie
+- `-w, --watermark` (obligatoire) : texte du filigrane
+- `--overwrite` (optionnel) : écrase les fichiers existants
+- `--use-colors` (optionnel) : active la variante couleur du filigrane
+- `--use-distortion` (optionnel) : active la distorsion du filigrane
 
 ## Tests
 
-Executer les tests:
+Exécuter les tests :
 
 ```bash
 mvn test
 ```
 
-Couverture actuelle:
+Couverture actuelle :
 
-- test moteur: generation d'un PDF watermarke et verification du nombre de pages
-- test CLI fichier unique
-- test CLI dossier recursif avec conservation de la structure
+- test moteur : génération d'un PDF filigrané et vérification du nombre de pages
+- test CLI sur fichier unique
+- test CLI sur dossier récursif avec conservation de la structure
 - test CLI en erreur si la sortie existe sans `--overwrite`
 
 ## Notes techniques
 
-- Le pipeline de rendu/watermark est volontairement aligne avec l'implementation DossierFacile.
-- Le projet est volontairement scope aux PDF en entree (pas d'images directes).
-- La sortie est un nouveau PDF rasterise et watermarke.
+- Le pipeline de rendu/filigrane est volontairement aligné avec l'implémentation DossierFacile.
+- Le projet est volontairement limité aux PDF en entrée (pas d'images directes).
+- La sortie est un nouveau PDF rasterisé et filigrané.
 
 ## Licence
 
